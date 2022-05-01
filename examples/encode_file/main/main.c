@@ -21,7 +21,7 @@ void speex_encode_task()
     char buf[PACKAGE_SIZE];
 
     // Create a new encoder state in narrowband mode
-    void *encoder_state = speex_decoder_init(&speex_nb_mode);
+    void *encoder_state = speex_encoder_init(&speex_nb_mode);
 
     // Set quality to 8 (15 kbps)
     uint32_t tmp = 8;
