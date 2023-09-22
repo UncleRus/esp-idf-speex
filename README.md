@@ -2,7 +2,7 @@
 
 https://www.speex.org/
 
-Version: 1.2.0
+Version: 1.2.1
 
 ## Speex: A Free Codec For Free Speech
 
