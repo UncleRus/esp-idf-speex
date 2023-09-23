@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script. -*-m4-*-
 
-AC_INIT([speex],[1.2.0],[speex-dev@xiph.org])
+AC_INIT([speex],[1.2.1],[speex-dev@xiph.org])
 
 AC_CONFIG_SRCDIR([libspeex/speex.c])
 AC_CONFIG_MACRO_DIR([m4])
@@ -10,12 +10,12 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 
 SPEEX_MAJOR_VERSION=1
-SPEEX_MINOR_VERSION=1
-SPEEX_MICRO_VERSION=16
+SPEEX_MINOR_VERSION=2
+SPEEX_MICRO_VERSION=1
 SPEEX_EXTRA_VERSION=
 
 SPEEX_LT_CURRENT=6
-SPEEX_LT_REVISION=1
+SPEEX_LT_REVISION=2
 SPEEX_LT_AGE=5
 
 
@@ -27,8 +27,8 @@ AM_INIT_AUTOMAKE([foreign no-define])
 AM_MAINTAINER_MODE([enable])
 
 AC_CANONICAL_HOST
-AC_LIBTOOL_WIN32_DLL
-AM_PROG_LIBTOOL
+_LT_SET_OPTION([LT_INIT],[win32-dll])
+LT_INIT
 
 AC_C_BIGENDIAN
 AC_C_CONST
@@ -37,15 +37,13 @@ AC_C_RESTRICT
 
 
 AC_MSG_CHECKING(for C99 variable-size arrays)
-AC_TRY_COMPILE( , [
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[
 int foo;
 foo = 10;
 int array[foo];
-],
-[has_var_arrays=yes;AC_DEFINE([VAR_ARRAYS], [], [Use C99 variable-size arrays])
-],
-has_var_arrays=no
-)
+]])],[has_var_arrays=yes;AC_DEFINE([VAR_ARRAYS], [], [Use C99 variable-size arrays])
+],[has_var_arrays=no
+])
 AC_MSG_RESULT($has_var_arrays)
 
 AC_CHECK_HEADERS([alloca.h getopt.h])
@@ -167,13 +165,12 @@ AC_ARG_ENABLE(float-api, [  --disable-float-api     Disable the floating-point A
 fi])
 
 AC_ARG_ENABLE(binaries, [  --disable-binaries   Do not build the encoder and decoder programs, only the library])
-if test "$enableval" != no; then
+AS_IF([test "x$enable_binaries" != "xno"], [
   PKG_CHECK_MODULES([OGG], [ogg],
     AM_CONDITIONAL([BUILD_BINARIES], true),
-    AM_CONDITIONAL([BUILD_BINARIES], false))
-else
-  AM_CONDITIONAL([BUILD_BINARIES], false)
-fi
+    [AC_MSG_WARN([Ogg not found, not building example programs])
+     AM_CONDITIONAL([BUILD_BINARIES], false)])],
+  [AM_CONDITIONAL([BUILD_BINARIES], false)])
 
 AC_ARG_ENABLE(vbr, [  --disable-vbr           Disable VBR and VAD from the codec],
 [if test "$enableval" = no; then
